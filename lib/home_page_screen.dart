@@ -8,51 +8,40 @@ class HomePageScreen extends StatefulWidget {
 }
 
 class _HomePageScreenState extends State<HomePageScreen> {
-  String resultP = "000";
-  String resultTip = "000";
-  String resultTotal = "000";
-  late var flag = 0;
-  late var tip = 0;
-  late double cmTip=0;
+  num resultP = 00.00;
+  num resultTip = 00.00;
+  num resultTotal = 00.00;
+  late num flag = 0;
+  late int tip = 0;
+  late int fixTip = 0;
+  late num cmTip = 0;
   TextEditingController totalBillController = TextEditingController();
+  TextEditingController customTipController = TextEditingController();
   int person = 1;
+  bool isCustomTips = false;
   @override
   void initState() {
     super.initState();
     increaseNum();
     decreaseNum();
-
+    submitCustomTip();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 30),
         child: Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              const SizedBox(
-                height: 5,
-              ),
               const TopNavPageScreen(),
               calculaterScreen(),
-              const SizedBox(
-                width: double.infinity,
-                height: 5,
-              ),
               billEnterScreen(),
-              const SizedBox(
-                width: double.infinity,
-                height: 5,
-              ),
               chooseTipScreen(),
-              const SizedBox(height: 10, width: double.infinity,),
-              buttonCustomTip(),
-              const SizedBox(
-                width: double.infinity,
-                height: 5,
-              ),
-              splitTotalButton(),
+              splitTotalButton()
             ],
           ),
         ),
@@ -63,14 +52,12 @@ class _HomePageScreenState extends State<HomePageScreen> {
   calculaterScreen() {
     return Container(
       width: 350,
-      height: 212,
+      height: 260,
       padding: const EdgeInsets.all(10),
       margin: const EdgeInsets.only(top: 10),
       decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(11),
-          // border: Border.all(color: Colors.black, width: 1),
-
           boxShadow: [
             BoxShadow(
                 color: Colors.grey.withOpacity(0.3),
@@ -94,7 +81,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
                 height: 15,
               ),
               Text(
-                resultP,
+                resultP.toStringAsFixed(2).toString(),
                 style:
                     const TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
               ),
@@ -124,7 +111,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
                         color: const Color(0xFF03C9BD),
                       ),
                       Text(
-                        resultTotal,
+                        '$resultTotal',
                         style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Color(0xFF03C9BD),
@@ -153,7 +140,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
                       color: const Color(0xFF03C9BD),
                     ),
                     Text(
-                      resultTip,
+                      '$resultTip',
                       style: const TextStyle(
                           fontSize: 35,
                           fontWeight: FontWeight.bold,
@@ -171,10 +158,11 @@ class _HomePageScreenState extends State<HomePageScreen> {
 
   billEnterScreen() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Expanded(
-          child: Column(
+        Container(
+          margin: const EdgeInsets.all(0),
+          child: const Column(
             children: [
               Text(
                 "Enter",
@@ -188,10 +176,18 @@ class _HomePageScreenState extends State<HomePageScreen> {
           ),
         ),
         Container(
-          width: 240,
+          width: 280,
           height: 50,
           decoration: BoxDecoration(
-              color: Colors.white, borderRadius: BorderRadius.circular(15)),
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(15),
+              boxShadow: [
+                BoxShadow(
+                    color: Colors.grey.withOpacity(0.3),
+                    blurRadius: 4,
+                    spreadRadius: 2,
+                    offset: const Offset(0, -3))
+              ]),
           child: Row(
             children: [
               SizedBox(
@@ -201,7 +197,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
                 height: 20,
               )),
               SizedBox(
-                  width: 100,
+                  width: 200,
                   child: TextField(
                     controller: totalBillController,
                     keyboardType: TextInputType.number,
@@ -216,74 +212,104 @@ class _HomePageScreenState extends State<HomePageScreen> {
   }
 
   chooseTipScreen() {
-    return Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-          const Column(
-    children: [
-      Text(
-        "Choose",
-        style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-      ),
-      Text(
-        "your tip",
-        style: TextStyle(fontSize: 15),
-      )
-    ],
+    return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            height: 60,
+            margin: const EdgeInsets.only(top: 40),
+            child: const Column(
+              children: [
+                Text(
+                  "Choose",
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  "your tip",
+                  style: TextStyle(fontSize: 15),
+                )
+              ],
+            ),
           ),
-          SizedBox(
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        InkWell(
-          onTap: (){
-            tip = int.parse('10%');
-          },
-          child: Container(
-              width: 49,
-              height: 49,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: const Color(0xFF03C9BD)),
-              child: const Center(
-                  child: Text(
-                "10%",
-                style: TextStyle(fontSize: 20, color: Colors.white),
-              ))),
-        ),
-        const SizedBox(width: 10,),
-        InkWell(
-          onTap: (){
-            tip= int.parse('15%');
-          },
-          child: Container(
-              width: 49,
-              height: 49,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: const Color(0xFF03C9BD)),
-              child: const Center(
-                  child: Text(
-                "15%",
-                style: TextStyle(fontSize: 20, color: Colors.white),
-              ))),
-        ),
-        const SizedBox(width: 10,),
-        InkWell(
-          onTap: (){tip= int.parse('20%');},
-          child: Container(
-            width: 49,
-            height: 49,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: const Color(0xFF03C9BD)),
-            child: const Center(
-                child: Text(
-              "20%",
-              style: TextStyle(fontSize: 20, color: Colors.white),
-            )),
-          ),
-        )
-      ],
-    ),
+          Container(
+            margin: const EdgeInsets.all(0),
+            width: 278,
+            height: 200,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        fixTip = 10;
+                        submitCustomTip();
+                      },
+                      child: Container(
+                          width: 60,
+                          height: 60,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: const Color(0xFF03C9BD)),
+                          child: const Center(
+                              child: Text(
+                            "10%",
+                            style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ))),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        fixTip = 15;
+                        submitCustomTip();
+                      },
+                      child: Container(
+                          width: 60,
+                          height: 60,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: const Color(0xFF03C9BD)),
+                          child: const Center(
+                              child: Text(
+                            "15%",
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
+                          ))),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        fixTip = 20;
+                        submitCustomTip();
+                      },
+                      child: Container(
+                        width: 60,
+                        height: 60,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: const Color(0xFF03C9BD)),
+                        child: const Center(
+                            child: Text(
+                          "20%",
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
+                        )),
+                      ),
+                    )
+                  ],
+                ),
+                Row(
+                  children: [buttonCustomTip()],
+                )
+              ],
+            ),
           ),
         ]);
   }
@@ -292,25 +318,69 @@ class _HomePageScreenState extends State<HomePageScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        InkWell(
-          onTap: (){
-              cmTip = int.parse(totalBillController.text) / tip;
-              cmTip.toStringAsFixed(2);
-              setState(() {
-
-              });
-          },
-          child: Container(
-            width: 200,
-            height: 50,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: const Color(0xFF03C9BD)),
-            child: const Center(
-                child: Text(
-              "Custom Tip",
-              style: TextStyle(fontSize: 20, color: Colors.white),
-            )),
+        Padding(
+          padding: const EdgeInsets.all(0.0),
+          child: Stack(
+            children: [
+              InkWell(
+                onTap: (){
+                  isCustomTips = false;
+                  setState(() {});
+                },
+                child: Container(
+                  width: 278,
+                  height: 60,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.grey.withOpacity(0.3),
+                            blurRadius: 4,
+                            spreadRadius: 2,
+                            offset: const Offset(0, -3))
+                      ]),
+                  child: Row(
+                    children: [
+                      const SizedBox(
+                          child: Icon(Icons.percent, weight: 20,)),
+                      SizedBox(
+                          width: 200,
+                          child: TextField(
+                            controller: customTipController,
+                            keyboardType: TextInputType.number,
+                            style: const TextStyle(fontSize: 20),
+                            decoration:
+                                const InputDecoration(border: InputBorder.none),
+                          ))
+                    ],
+                  ),
+                ),
+              ),
+              isCustomTips
+                  ? Container()
+                  : InkWell(
+                      onTap: () {
+                        isCustomTips = true;
+                        setState(() {});
+                      },
+                      child: Container(
+                        width: 278,
+                        height: 60,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: const Color(0xFF03C9BD)),
+                        child: const Center(
+                            child: Text(
+                          "Custom Tip",
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
+                        )),
+                      ),
+                    ),
+            ],
           ),
         ),
       ],
@@ -320,97 +390,118 @@ class _HomePageScreenState extends State<HomePageScreen> {
   splitTotalButton() {
     return SizedBox(
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Column(
-            children: [
-              SizedBox(
-                child: Text("Split",
-                    style:
-                        TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-              ),
-              SizedBox(
-                child: Text(
-                  "the total",
-                  style: TextStyle(
-                    fontSize: 15,
+          Container(
+            margin: const EdgeInsets.all(0),
+            child: const Column(
+              children: [
+                SizedBox(
+                  child: Text("Split",
+                      style:
+                          TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                ),
+                SizedBox(
+                  child: Text(
+                    "the total",
+                    style: TextStyle(
+                      fontSize: 15,
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.all(0),
+            width: 268,
+            child: Row(
+              children: [
+                InkWell(
+                  onTap: () {
+                    flag = decreaseNum();
+                  },
+                  child: Container(
+                    width: 60,
+                    height: 60,
+                    decoration: const BoxDecoration(
+                        color: Color(0xFF03C9BD),
+                        borderRadius:
+                            BorderRadius.horizontal(left: Radius.circular(10))),
+                    child: const Center(
+                        child: Text(
+                      "-",
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
+                    )),
                   ),
                 ),
-              )
-            ],
-          ),
-          Row(
-            children: [
-              InkWell(
-                onTap: (){
-                  flag = decreaseNum();
-                },
-                child: Container(
-                  width: 50,
-                  height: 50,
-                  decoration: const BoxDecoration(
-                      color: Color(0xFF03C9BD),
-                      borderRadius:
-                          BorderRadius.horizontal(left: Radius.circular(10))),
-                  child: const Center(
+                Container(
+                  width: 147,
+                  height: 59,
+                  decoration: const BoxDecoration(color: Colors.white),
+                  child: Center(
                       child: Text(
-                    "-",
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white),
+                    '$person',
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.bold),
                   )),
                 ),
-              ),
-              Container(
-                width: 100,
-                height: 49,
-                decoration: const BoxDecoration(color: Colors.white),
-                child: Center(
-                    child: Text(
-                  '$person',
-                  style: const TextStyle(
-                      fontSize: 15, fontWeight: FontWeight.bold),
-                )),
-              ),
-              InkWell(
-                onTap: (){
-                  flag = increaseNum();
-
-                },
-                child: Container(
-                  width: 50,
-                  height: 50,
-                  decoration: const BoxDecoration(
-                      color: Color(0xFF03C9BD),
-                      borderRadius:
-                          BorderRadius.horizontal(right: Radius.circular(10))),
-                  child: const Center(
-                      child: Text(
-                    "+",
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white),
-                  )),
-                ),
-              )
-            ],
+                InkWell(
+                  onTap: () {
+                    flag = increaseNum();
+                  },
+                  child: Container(
+                    width: 60,
+                    height: 60,
+                    decoration: const BoxDecoration(
+                        color: Color(0xFF03C9BD),
+                        borderRadius: BorderRadius.horizontal(
+                            right: Radius.circular(10))),
+                    child: const Center(
+                        child: Text(
+                      "+",
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
+                    )),
+                  ),
+                )
+              ],
+            ),
           ),
         ],
       ),
     );
   }
-  increaseNum(){
+
+  increaseNum() {
     person++;
-    setState(() {
-
-    });
+    submitCustomTip();
   }
-  decreaseNum(){
-    person>2 ? person-- : person = 1;
-    setState(() {
 
-    });
+  decreaseNum() {
+    if (person > 1) {
+      person--;
+      submitCustomTip();
+    } else {
+      person = 1;
+    }
+  }
+
+  submitCustomTip() {
+    if (totalBillController.text != "") {
+      resultTotal = double.parse(totalBillController.text.toString());
+      tip = int.parse(customTipController.text.toString())>=1 ? int.parse(customTipController.text.toString()) : fixTip;
+      resultTip = resultTotal * (tip / 100);
+      cmTip = resultTotal + resultTip;
+      resultP = cmTip / person;
+      setState(() {});
+    } else {
+      person = 1;
+    }
   }
 }
